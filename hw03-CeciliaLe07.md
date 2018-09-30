@@ -182,12 +182,14 @@ word_mean <- gapminder %>%
                 group_by(year) %>% 
                 summarise(word_mean = mean(lifeExp)) 
 
-gapminder %>%  
-  mutate(word_mean = unlist(rep(word_mean[,2], nlevels(country)))) %>% 
-  mutate(counter = if_else(lifeExp < word_mean,1,0)) %>% 
-  group_by(year) %>% 
-  summarise(total_abs = sum(counter),
-            total_rel = sum(counter)/length(counter))
+mydf <- gapminder %>%  
+          mutate(word_mean = unlist(rep(word_mean[,2], nlevels(country)))) %>% 
+          mutate(counter = if_else(lifeExp < word_mean,1,0)) %>% 
+          group_by(year) %>% 
+          summarise(total_abs = sum(counter),
+                    total_rel = sum(counter)/length(counter))
+          
+mydf
 ```
 
     ## # A tibble: 12 x 3
@@ -205,6 +207,19 @@ gapminder %>%
     ## 10  1997       57.     0.401
     ## 11  2002       57.     0.401
     ## 12  2007       57.     0.401
+
+``` r
+mydf %>% 
+  ggplot(aes(x="",y=total_rel*100,fill=total_rel*100)) +
+  geom_bar(width = 1, stat = "identity") +
+  scale_y_continuous(limits=c(0,100)) +
+  facet_grid(~year) +
+  ggtitle("Percentage of countries with life expectancy under the world average life expectancy") +
+  xlab("Year") +
+  ylab("Percentage")
+```
+
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 -   Find countries with interesting stories. Open-ended and, therefore, hard. Promising but unsuccessful attempts are encouraged. This will generate interesting questions to follow up on in class.
 
