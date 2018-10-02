@@ -216,6 +216,7 @@ kable(col.names=c("Country","Continent","Year","lifeExp","pop","gdpPercap","Grow
 Finally, we can observe the behaviour for countries with the biggest growth of life expectancy since 1952 to 2007:
 
 ```{r}
+
 gapminder %>% 
 filter(continent == "Americas", country%in%head(T4)$country) %>% 
 group_by(year) %>% 
