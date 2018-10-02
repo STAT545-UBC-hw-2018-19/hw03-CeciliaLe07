@@ -13,16 +13,16 @@ Using `dplyr` I could obtain the maximum and minimum gdpPercap for each continen
 
 ``` r
 T1 <- gapminder %>% 
-         group_by(continent) %>% 
-         summarize(Minimum = round(min(gdpPercap),2),
-                   Maximum = round(max(gdpPercap),2))
+group_by(continent) %>% 
+summarize(Minimum = round(min(gdpPercap),2),
+Maximum = round(max(gdpPercap),2))
 ```
 
     ## Warning: package 'bindrcpp' was built under R version 3.3.3
 
 ``` r
 T1 %>% 
-  kable(col.names=c("Continent","Minimum","Maximum"))
+kable(col.names=c("Continent","Minimum","Maximum"))
 ```
 
 <table>
@@ -98,6 +98,16 @@ Oceania
 </tbody>
 </table>
 As I tried to plot maximum and minimum in the same graph by using the previuos table without success, I built the *TT* data frame to have all data about minimum and maximum in the same column, and I added an extra column called *Extreme* to distinghish maximum and minimum of each continent, after that I could generate the following graph:
+
+``` r
+TT <- data.frame(rep(T1$continent,2),
+c(rep("Maximum",nlevels(T1$continent)),rep("Minimum",nlevels(T1$continent))),
+c(T1$Maximum,T1$Minimum))
+colnames(TT) <- c("continent","Extreme","gdpPercap")
+
+TT %>% 
+kable(col.names=c("Continent","Extreme","gdpPercap"))
+```
 
 <table>
 <thead>
@@ -226,6 +236,14 @@ Minimum
 </tr>
 </tbody>
 </table>
+``` r
+ggplot(TT, aes(continent, gdpPercap, color = Extreme)) +
+geom_point(aes(size=gdpPercap),alpha=0.8) +
+ggtitle("Extreme values of GDP Per capita by continent") +
+xlab("Continent") +
+ylab("GDP Per capita")
+```
+
 ![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
 -   Look at the spread of GDP per capita within the continents.
@@ -234,9 +252,9 @@ To look at the spread of gdpPercap of each continent we can check the range of t
 
 ``` r
 T1 %>% 
-  mutate(Range = Maximum - Minimum) %>% 
-  arrange(Range) %>% 
-  kable(col.names=c("Continent","Minimum","Maximum","Range"))
+mutate(Range = Maximum - Minimum) %>% 
+arrange(Range) %>% 
+kable(col.names=c("Continent","Minimum","Maximum","Range"))
 ```
 
 <table>
@@ -333,13 +351,13 @@ This result allow us to notice that Africa has the smallest spread, this is, Afr
 
 ``` r
 gapminder %>% 
-  group_by(continent) %>%
-  ggplot(aes(continent,gdpPercap)) +
-    geom_violin(fill="#EBF3FB",col="#061A40") +
-    geom_jitter(col="#0353A4",alpha=0.1) +
-    ggtitle("Kernel density of GDP per capita by continent") +
-    xlab("Continent") +
-    ylab("GDP Per capita")
+group_by(continent) %>%
+ggplot(aes(continent,gdpPercap)) +
+geom_violin(fill="#EBF3FB",col="#061A40") +
+geom_jitter(col="#0353A4",alpha=0.1) +
+ggtitle("Kernel density of GDP per capita by continent") +
+xlab("Continent") +
+ylab("GDP Per capita")
 ```
 
 ![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-4-1.png)
@@ -349,6 +367,16 @@ As we can see, the most data of Africa is concentrated at the lower levels of GD
 -   Compute a trimmed mean of life expectancy for different years. Or a weighted mean, weighting by population. Just try something other than the plain vanilla mean.
 
 We are going to calculate the 20% trimmed mean for life expectancy across years:
+
+``` r
+T2 <- gapminder %>% 
+group_by(year) %>%
+filter( lifeExp > quantile(lifeExp,probs = c(.20)) & lifeExp < quantile(lifeExp,probs = c(.80)))
+
+T2 %>% 
+summarise(Trimmed_mean = mean(lifeExp)) %>% 
+kable(col.names=c("Year","Trimmed mean"))
+```
 
 <table>
 <thead>
@@ -460,7 +488,18 @@ Trimmed mean
 </tr>
 </tbody>
 </table>
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-6-1.png)
+``` r
+T2 %>% 
+ggplot(aes(as.factor(year),lifeExp)) +
+geom_boxplot(fill="#5F758E", alpha = 0.5) +
+stat_summary(fun.y = mean, geom = "errorbar", aes(ymax = ..y.., ymin = ..y..),
+width = 1, linetype = "dashed", col = "#188FA7") +
+ggtitle("Distribution of life expectancy since 1952 to 2007 \n (Data between the 20% more extreme values)") +
+xlab("Year") +
+ylab("Life Expectancy")
+```
+
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
 We can see behaviour of trimmed mean (dotted line) across the years, as we can see at the graph, the spread of life expectancy decreased by the process of trimmed. Moreover we can distinguish two different characteristics on data before and after year 1982. This is, before 1982, the trimmed life expectancy mean was bigger than median, in 1982 mean and median were equivalent, and after 1982 trimmed mean was smaller than median.
 
@@ -470,11 +509,11 @@ By following table we can appreciate some summary statistics about life expectan
 
 ``` r
 gapminder %>% 
-  group_by(continent,year) %>% 
-  summarise( Min = min(lifeExp),
-             Mean = mean(lifeExp),
-             Max = max(lifeExp)) %>% 
-  kable()
+group_by(continent,year) %>% 
+summarise( Min = min(lifeExp),
+Mean = mean(lifeExp),
+Max = max(lifeExp)) %>% 
+kable()
 ```
 
 <table>
@@ -1522,18 +1561,18 @@ Oceania
 </table>
 ``` r
 gapminder %>% 
-  group_by(continent,year) %>% 
-  ggplot(aes(year,lifeExp,color = continent)) +
-  geom_smooth(se=FALSE) +
-  geom_jitter(alpha = 0.2) +
-  ggtitle("Trend of life expectancy from 1952 to 2007 by continent") +
-  xlab("Year") +
-  ylab("Life expectancy")
+group_by(continent,year) %>% 
+ggplot(aes(year,lifeExp,color = continent)) +
+geom_smooth(se=FALSE) +
+geom_jitter(alpha = 0.2) +
+ggtitle("Trend of life expectancy from 1952 to 2007 by continent") +
+xlab("Year") +
+ylab("Life expectancy")
 ```
 
     ## `geom_smooth()` using method = 'loess'
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 As we can see, the ranking of life expectancy has been the same during this period, with Oceania being the continent with highest life expectancy, followed by Europe. On the other hand, Americas and Asia has shown a similar growth rate, being Americas the country with ths highest life expectancy in comparison with Asia and Africa, this last has owned the lowest life expectancy, and also showed the slowest growth rate from the year 1992.
 
@@ -1543,18 +1582,18 @@ As we can see, the ranking of life expectancy has been the same during this peri
 
 ``` r
 word_mean <- gapminder %>% 
-                group_by(year) %>% 
-                summarise(word_mean = mean(lifeExp)) 
+group_by(year) %>% 
+summarise(word_mean = mean(lifeExp)) 
 
 mydf <- gapminder %>%  
-          mutate(word_mean = unlist(rep(word_mean[,2], nlevels(country)))) %>% 
-          mutate(counter = if_else(lifeExp < word_mean,1,0)) %>% 
-          group_by(year) %>% 
-          summarise(total_abs = sum(counter),
-                    total_rel = sum(counter)/length(counter))
-          
+mutate(word_mean = unlist(rep(word_mean[,2], nlevels(country)))) %>% 
+mutate(counter = if_else(lifeExp < word_mean,1,0)) %>% 
+group_by(year) %>% 
+summarise(total_abs = sum(counter),
+total_rel = sum(counter)/length(counter))
+
 mydf %>% 
-  kable(col.names=c("Year","Total absolute","Total relative"))
+kable(col.names=c("Year","Total absolute","Total relative"))
 ```
 
 <table>
@@ -1708,16 +1747,16 @@ Total relative
 </table>
 ``` r
 mydf %>% 
-  ggplot(aes(x="",y=total_rel*100,fill=total_rel*100)) +
-  geom_bar(width = 1, stat = "identity") +
-  scale_y_continuous(limits=c(0,100)) +
-  facet_grid(~year) +
-  ggtitle("Percentage of countries with life expectancy \nunder the world average life expectancy") +
-  xlab("Year") +
-  ylab("Percentage")
+ggplot(aes(x="",y=total_rel*100,fill=total_rel*100)) +
+geom_bar(width = 1, stat = "identity") +
+scale_y_continuous(limits=c(0,100)) +
+facet_grid(~year) +
+ggtitle("Percentage of countries with life expectancy \nunder the world average life expectancy") +
+xlab("Year") +
+ylab("Percentage")
 ```
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 -   Find countries with interesting stories. Open-ended and, therefore, hard. Promising but unsuccessful attempts are encouraged. This will generate interesting questions to follow up on in class.
 
@@ -1725,14 +1764,14 @@ In the next table, it is showed what continents presented a life expectancy mean
 
 ``` r
 T3 <- gapminder %>% 
-        group_by(year,continent) %>%
-        summarize(average = mean(lifeExp)) %>% 
-        mutate(Level = if_else(average<mean(average),"Under word average","Over word average"))
+group_by(year,continent) %>%
+summarize(average = mean(lifeExp)) %>% 
+mutate(Level = if_else(average<mean(average),"Under word average","Over word average"))
 
 # Example for 1952
 T3 %>% 
-  filter(year == 1952) %>% 
-  kable()
+filter(year == 1952) %>% 
+kable()
 ```
 
 <table>
@@ -1828,8 +1867,8 @@ Over word average
 ``` r
 #Example for 2007
 T3 %>% 
-  filter(year == 2007) %>% 
-  kable()
+filter(year == 2007) %>% 
+kable()
 ```
 
 <table>
@@ -1926,12 +1965,12 @@ As we can see, Americas started by presenting life expectancy under the world av
 
 ``` r
 T4 <- gapminder %>% 
-      filter(continent == "Americas", year==2007) %>%
-      mutate(growth_rate = lifeExp - first(lifeExp)) %>% 
-      arrange(desc(growth_rate))
+filter(continent == "Americas", year==2007) %>%
+mutate(growth_rate = lifeExp - first(lifeExp)) %>% 
+arrange(desc(growth_rate))
 
 head(T4) %>% 
-  kable(col.names=c("Country","Continent","Year","lifeExp","pop","gdpPercap","Growth"))
+kable(col.names=c("Country","Continent","Year","lifeExp","pop","gdpPercap","Growth"))
 ```
 
 <table>
@@ -2103,17 +2142,17 @@ Americas
 </table>
 ``` r
 gapminder %>% 
-  filter(continent == "Americas", country%in%head(T4)$country) %>% 
-  group_by(year) %>% 
-  ggplot(aes(year,lifeExp,color = country)) +
-  geom_smooth(se=FALSE) +
-  ggtitle("Trend of life expectancy from 1952 to 2007 by countries of Americas") +
-  xlab("Year") +
-  ylab("Life expectancy")
+filter(continent == "Americas", country%in%head(T4)$country) %>% 
+group_by(year) %>% 
+ggplot(aes(year,lifeExp,color = country)) +
+geom_smooth(se=FALSE) +
+ggtitle("Trend of life expectancy from 1952 to 2007 by countries of Americas") +
+xlab("Year") +
+ylab("Life expectancy")
 ```
 
     ## `geom_smooth()` using method = 'loess'
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-11-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 About this result we can highligth the behaviour of Costa Rica and Cuba, since both countries presented a change in their growth rate from the year 1882, when it appears they had a more accelerated growth rate.
