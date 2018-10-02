@@ -226,6 +226,8 @@ Minimum
 </tr>
 </tbody>
 </table>
+The following graph illustrates the maximum and minimum values for each continent
+
 ``` r
 ggplot(TT, aes(continent, gdpPercap, color = Extreme)) +
 geom_point(aes(size=gdpPercap),alpha=0.8) +
