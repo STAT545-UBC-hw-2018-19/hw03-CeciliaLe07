@@ -480,6 +480,8 @@ Trimmed mean
 </tr>
 </tbody>
 </table>
+The following graph shows the boxplot of life expentancy for every year for the trimmed data, and also draws the trimmed mean:
+
 ``` r
 T2 %>% 
 ggplot(aes(as.factor(year),lifeExp)) +
@@ -491,7 +493,7 @@ xlab("Year") +
 ylab("Life Expectancy")
 ```
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 We can see behaviour of trimmed mean (dotted line) across the years, as we can see at the graph, the spread of life expectancy decreased by the process of trimmed. Moreover we can distinguish two different characteristics on data before and after year 1982. This is, before 1982, the trimmed life expectancy mean was bigger than median, in 1982 mean and median were equivalent, and after 1982 trimmed mean was smaller than median.
 
@@ -1551,6 +1553,8 @@ Oceania
 </tr>
 </tbody>
 </table>
+We can observe the behaviour of life expectancy across this period for each continent in the following graph:
+
 ``` r
 gapminder %>% 
 group_by(continent,year) %>% 
@@ -1564,7 +1568,7 @@ ylab("Life expectancy")
 
     ## `geom_smooth()` using method = 'loess'
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 As we can see, the ranking of life expectancy has been the same during this period, with Oceania being the continent with highest life expectancy, followed by Europe. On the other hand, Americas and Asia has shown a similar growth rate, being Americas the country with ths highest life expectancy in comparison with Asia and Africa, this last has owned the lowest life expectancy, and also showed the slowest growth rate from the year 1992.
 
@@ -1737,6 +1741,8 @@ Total relative
 </tr>
 </tbody>
 </table>
+We can observe this total relative as a percentage in the next graph:
+
 ``` r
 mydf %>% 
 ggplot(aes(x="",y=total_rel*100,fill=total_rel*100)) +
@@ -1748,7 +1754,7 @@ xlab("Year") +
 ylab("Percentage")
 ```
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 -   Find countries with interesting stories. Open-ended and, therefore, hard. Promising but unsuccessful attempts are encouraged. This will generate interesting questions to follow up on in class.
 
@@ -1759,8 +1765,11 @@ T3 <- gapminder %>%
 group_by(year,continent) %>%
 summarize(average = mean(lifeExp)) %>% 
 mutate(Level = if_else(average<mean(average),"Under word average","Over word average"))
+```
 
-# Example for 1952
+Example for 1952
+
+``` r
 T3 %>% 
 filter(year == 1952) %>% 
 kable()
@@ -1856,8 +1865,9 @@ Over word average
 </tr>
 </tbody>
 </table>
+Example for 2007
+
 ``` r
-#Example for 2007
 T3 %>% 
 filter(year == 2007) %>% 
 kable()
@@ -1953,7 +1963,7 @@ Over word average
 </tr>
 </tbody>
 </table>
-As we can see, Americas started by presenting life expectancy under the world average on 1952, but at year 2007, Americas had life expectancy mean over the world average. Furthermore, we can see that all continents presented incresing trends of life expectancy across years, so the fact tha Americas got to position over the world average may obey some countries of Americas improved their life expectancy. We are goind to try detecting some of this countris by the assistance of following graph:
+As we can see, Americas started by presenting life expectancy under the world average on 1952, but at year 2007, Americas had life expectancy mean over the world average. Furthermore, we can see that all continents presented incresing trends of life expectancy across years, so the fact tha Americas got to position over the world average may obey some countries of Americas improved their life expectancy. We are goind to try detecting some of this countries by the assistance of following table:
 
 ``` r
 T4 <- gapminder %>% 
@@ -2132,6 +2142,8 @@ Americas
 </tr>
 </tbody>
 </table>
+Finally, we can observe the behaviour for countries with the biggest growth of life expectancy since 1952 to 2007:
+
 ``` r
 gapminder %>% 
 filter(continent == "Americas", country%in%head(T4)$country) %>% 
@@ -2145,6 +2157,6 @@ ylab("Life expectancy")
 
     ## `geom_smooth()` using method = 'loess'
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-11-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
 About this result we can highligth the behaviour of Costa Rica and Cuba, since both countries presented a change in their growth rate from the year 1882, when it appears they had a more accelerated growth rate.

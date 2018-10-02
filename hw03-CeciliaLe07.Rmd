@@ -95,7 +95,11 @@ filter( lifeExp > quantile(lifeExp,probs = c(.20)) & lifeExp < quantile(lifeExp,
 T2 %>% 
 summarise(Trimmed_mean = mean(lifeExp)) %>% 
 kable(col.names=c("Year","Trimmed mean"))
+```
 
+The following graph shows the boxplot of life expentancy for every year for the trimmed data, and also draws the trimmed mean:
+
+```{r}
 T2 %>% 
 ggplot(aes(as.factor(year),lifeExp)) +
 geom_boxplot(fill="#5F758E", alpha = 0.5) +
@@ -121,6 +125,7 @@ Max = max(lifeExp)) %>%
 kable()
 ```
 
+We can observe the behaviour of life expectancy across this period for each continent in the following graph:
 
 ```{r}
 gapminder %>% 
@@ -153,7 +158,11 @@ total_rel = sum(counter)/length(counter))
 
 mydf %>% 
 kable(col.names=c("Year","Total absolute","Total relative"))
+```
 
+We can observe this total relative as a percentage in the next graph:
+
+```{r}
 mydf %>% 
 ggplot(aes(x="",y=total_rel*100,fill=total_rel*100)) +
 geom_bar(width = 1, stat = "identity") +
@@ -172,28 +181,29 @@ In the next table, it is showed what continents presented a life expectancy mean
 
 
 ```{r}
-
 T3 <- gapminder %>% 
 group_by(year,continent) %>%
 summarize(average = mean(lifeExp)) %>% 
 mutate(Level = if_else(average<mean(average),"Under word average","Over word average"))
+```
 
-# Example for 1952
+Example for 1952
+```{r}
 T3 %>% 
 filter(year == 1952) %>% 
 kable()
+```
 
-#Example for 2007
+Example for 2007
+```{r}
 T3 %>% 
 filter(year == 2007) %>% 
 kable()
-
 ```
 
-As we can see, Americas started by presenting life expectancy under the world average on 1952, but at year 2007, Americas had life expectancy mean over the world average. Furthermore, we can see that all continents presented incresing trends of life expectancy across years, so the fact tha Americas got to position over the world average may obey some countries of Americas improved their life expectancy. We are goind to try detecting some of this countris by the assistance of following graph:
+As we can see, Americas started by presenting life expectancy under the world average on 1952, but at year 2007, Americas had life expectancy mean over the world average. Furthermore, we can see that all continents presented incresing trends of life expectancy across years, so the fact tha Americas got to position over the world average may obey some countries of Americas improved their life expectancy. We are goind to try detecting some of this countries by the assistance of following table:
 
 ```{r}
-
 T4 <- gapminder %>% 
 filter(continent == "Americas", year==2007) %>%
 mutate(growth_rate = lifeExp - first(lifeExp)) %>% 
@@ -201,8 +211,11 @@ arrange(desc(growth_rate))
 
 head(T4) %>% 
 kable(col.names=c("Country","Continent","Year","lifeExp","pop","gdpPercap","Growth"))
+```
 
+Finally, we can observe the behaviour for countries with the biggest growth of life expectancy since 1952 to 2007:
 
+```{r}
 gapminder %>% 
 filter(continent == "Americas", country%in%head(T4)$country) %>% 
 group_by(year) %>% 
