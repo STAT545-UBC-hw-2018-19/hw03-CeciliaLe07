@@ -82,8 +82,8 @@ As we can see, the most data of Africa is concentrated at the lower levels of GD
 
 We are going to calculate the 20% trimmed mean for life expectancy across years:
 
-
-```{r}
+<div class="twoC">
+```{r results = 'asis', echo=FALSE}
 T2 <- gapminder %>% 
         group_by(year) %>%
         filter( lifeExp > quantile(lifeExp,probs = c(.20)) & lifeExp < quantile(lifeExp,probs = c(.80)))
@@ -91,7 +91,9 @@ T2 <- gapminder %>%
 T2 %>% 
   summarise(Trimmed_mean = mean(lifeExp)) %>% 
   kable(col.names=c("Year","Trimmed mean"))
+```
 
+```{r echo=FALSE}
 T2 %>% 
   ggplot(aes(as.factor(year),lifeExp)) +
   geom_boxplot(fill="#5F758E", alpha = 0.5) +
@@ -100,7 +102,10 @@ T2 %>%
   ggtitle("Distribution of life expectancy since 1952 to 2007 \n (Data between the 20% more extreme values)") +
   xlab("Year") +
   ylab("Life Expectancy")
+
 ```
+</div>
+<div class="clearer"></div>
 
 We can see behaviour of trimmed mean (dotted line) across the years, as we can see at the graph, the spread of life expectancy decreased by the process of trimmed. Moreover we can distinguish two different characteristics on data before and after year 1982. This is, before 1982, the trimmed life expectancy mean was bigger than median, in 1982 mean and median were equivalent, and after 1982 trimmed mean was smaller than median.
 

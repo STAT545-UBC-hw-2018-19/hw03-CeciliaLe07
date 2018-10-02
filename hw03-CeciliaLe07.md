@@ -368,16 +368,6 @@ As we can see, the most data of Africa is concentrated at the lower levels of GD
 
 We are going to calculate the 20% trimmed mean for life expectancy across years:
 
-``` r
-T2 <- gapminder %>% 
-        group_by(year) %>%
-        filter( lifeExp > quantile(lifeExp,probs = c(.20)) & lifeExp < quantile(lifeExp,probs = c(.80)))
-
-T2 %>% 
-  summarise(Trimmed_mean = mean(lifeExp)) %>% 
-  kable(col.names=c("Year","Trimmed mean"))
-```
-
 <table>
 <thead>
 <tr>
@@ -488,18 +478,7 @@ Trimmed mean
 </tr>
 </tbody>
 </table>
-``` r
-T2 %>% 
-  ggplot(aes(as.factor(year),lifeExp)) +
-  geom_boxplot(fill="#5F758E", alpha = 0.5) +
-  stat_summary(fun.y = mean, geom = "errorbar", aes(ymax = ..y.., ymin = ..y..),
-                 width = 1, linetype = "dashed", col = "#188FA7") +
-  ggtitle("Distribution of life expectancy since 1952 to 2007 \n (Data between the 20% more extreme values)") +
-  xlab("Year") +
-  ylab("Life Expectancy")
-```
-
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-5-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 We can see behaviour of trimmed mean (dotted line) across the years, as we can see at the graph, the spread of life expectancy decreased by the process of trimmed. Moreover we can distinguish two different characteristics on data before and after year 1982. This is, before 1982, the trimmed life expectancy mean was bigger than median, in 1982 mean and median were equivalent, and after 1982 trimmed mean was smaller than median.
 
@@ -1572,7 +1551,7 @@ gapminder %>%
 
     ## `geom_smooth()` using method = 'loess'
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 As we can see, the ranking of life expectancy has been the same during this period, with Oceania being the continent with highest life expectancy, followed by Europe. On the other hand, Americas and Asia has shown a similar growth rate, being Americas the country with ths highest life expectancy in comparison with Asia and Africa, this last has owned the lowest life expectancy, and also showed the slowest growth rate from the year 1992.
 
@@ -1756,7 +1735,7 @@ mydf %>%
   ylab("Percentage")
 ```
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 -   Find countries with interesting stories. Open-ended and, therefore, hard. Promising but unsuccessful attempts are encouraged. This will generate interesting questions to follow up on in class.
 
@@ -2153,6 +2132,6 @@ gapminder %>%
 
     ## `geom_smooth()` using method = 'loess'
 
-![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![](hw03-CeciliaLe07_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 About this result we can highligth the behaviour of Costa Rica and Cuba, since both countries presented a change in their growth rate from the year 1882, when it appears they had a more accelerated growth rate.
