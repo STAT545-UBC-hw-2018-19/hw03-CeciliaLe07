@@ -99,16 +99,6 @@ Oceania
 </table>
 As I tried to plot maximum and minimum in the same graph by using the previuos table without success, I built the *TT* data frame to have all data about minimum and maximum in the same column, and I added an extra column called *Extreme* to distinghish maximum and minimum of each continent, after that I could generate the following graph:
 
-``` r
-TT <- data.frame(rep(T1$continent,2),
-c(rep("Maximum",nlevels(T1$continent)),rep("Minimum",nlevels(T1$continent))),
-c(T1$Maximum,T1$Minimum))
-colnames(TT) <- c("continent","Extreme","gdpPercap")
-
-TT %>% 
-kable(col.names=c("Continent","Extreme","gdpPercap"))
-```
-
 <table>
 <thead>
 <tr>
