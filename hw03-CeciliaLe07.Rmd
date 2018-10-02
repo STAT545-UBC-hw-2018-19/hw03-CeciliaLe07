@@ -22,7 +22,7 @@ Here are some sample tasks for you to populate your cheat sheet with. If you wan
 
 Using `dplyr` I could obtain the maximum and minimum gdpPercap for each continent by the following statement:
 
-```{r}
+```{r 1st task}
 T1 <- gapminder %>% 
          group_by(continent) %>% 
          summarize(Minimum = round(min(gdpPercap),2),
@@ -34,7 +34,7 @@ T1 %>%
 
 As I tried to plot maximum and minimum in the same graph by using the previuos table without success, I built the *TT* data frame to have all data about minimum and maximum in the same column, and I added an extra column called *Extreme* to distinghish maximum and minimum of each continent, after that I could generate the following graph:
 
-```{r}
+```{r 1st task graph}
 TT <- data.frame(rep(T1$continent,2),
                 c(rep("Maximum",nlevels(T1$continent)),rep("Minimum",nlevels(T1$continent))),
                 c(T1$Maximum,T1$Minimum))
@@ -55,7 +55,7 @@ ggplot(TT, aes(continent, gdpPercap, color = Extreme)) +
 
 To look at the spread of gdpPercap of each continent we can check the range of that value by continent:
 
-```{r}
+```{r 2nd task}
 T1 %>% 
   mutate(Range = Maximum - Minimum) %>% 
   arrange(Range) %>% 
@@ -64,7 +64,7 @@ T1 %>%
 
 This result allow us to notice that Africa has the smallest spread, this is, Africa is the continent with a distribution of GDP per capita less extreme, contrary to Asia, which has the largest spread. Furthermore, we can observe the entire behaviour of GDP Per Capita by continent, not only the extreme with the assitance of following graph:
 
-```{r}
+```{r 2nd task graph}
 gapminder %>% 
   group_by(continent) %>%
   ggplot(aes(continent,gdpPercap)) +
@@ -82,7 +82,8 @@ As we can see, the most data of Africa is concentrated at the lower levels of GD
 
 We are going to calculate the 20% trimmed mean for life expectancy across years:
 
-```{r}
+
+```{r 3rd task}
 T2 <- gapminder %>% 
         group_by(year) %>%
         filter( lifeExp > quantile(lifeExp,probs = c(.20)) & lifeExp < quantile(lifeExp,probs = c(.80)))
@@ -90,7 +91,7 @@ T2 <- gapminder %>%
 T2 %>% 
   summarise(Trimmed_mean = mean(lifeExp)) %>% 
   kable(col.names=c("Year","Trimmed mean"))
-  
+
 T2 %>% 
   ggplot(aes(as.factor(year),lifeExp)) +
   geom_boxplot(fill="#5F758E", alpha = 0.5) +
@@ -99,7 +100,6 @@ T2 %>%
   ggtitle("Distribution of life expectancy since 1952 to 2007 \n (Data between the 20% more extreme values)") +
   xlab("Year") +
   ylab("Life Expectancy")
-
 ```
 
 We can see behaviour of trimmed mean (dotted line) across the years, as we can see at the graph, the spread of life expectancy decreased by the process of trimmed. Moreover we can distinguish two different characteristics on data before and after year 1982. This is, before 1982, the trimmed life expectancy mean was bigger than median, in 1982 mean and median were equivalent, and after 1982 trimmed mean was smaller than median.
@@ -108,7 +108,7 @@ We can see behaviour of trimmed mean (dotted line) across the years, as we can s
 
 By following table we can appreciate some summary statistics about life expectancy by continent and year, such as the maximum, minimum and mean.
 
-```{r}
+```{r 4th task}
 gapminder %>% 
   group_by(continent,year) %>% 
   summarise( Min = min(lifeExp),
@@ -118,7 +118,7 @@ gapminder %>%
 ```
 
 
-```{r}
+```{r 4th task graph}
 gapminder %>% 
   group_by(continent,year) %>% 
   ggplot(aes(year,lifeExp,color = continent)) +
@@ -135,7 +135,7 @@ As we can see, the ranking of life expectancy has been the same during this peri
 
 *This was very messy to me since I had to generate a repetition vector with the world life expectancy mean by year, and then add that vector to a new column of gapminder. However, if the order of year on gapminder changes, following statement wont work correctly.*
 
-```{r}
+```{r 5th task}
 word_mean <- gapminder %>% 
                 group_by(year) %>% 
                 summarise(word_mean = mean(lifeExp)) 
@@ -167,7 +167,7 @@ mydf %>%
 In the next table, it is showed what continents presented a life expectancy mean under or over the average of all continents life expectancy by year.
 
 
-```{r}
+```{r 6th task}
 
 T3 <- gapminder %>% 
         group_by(year,continent) %>%
@@ -188,7 +188,7 @@ T3 %>%
 
 As we can see, Americas started by presenting life expectancy under the world average on 1952, but at year 2007, Americas had life expectancy mean over the world average. Furthermore, we can see that all continents presented incresing trends of life expectancy across years, so the fact tha Americas got to position over the world average may obey some countries of Americas improved their life expectancy. We are goind to try detecting some of this countris by the assistance of following graph:
 
-```{r}
+```{r 7th task}
 
 T4 <- gapminder %>% 
       filter(continent == "Americas", year==2007) %>%
